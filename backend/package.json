@@ -1,0 +1,20 @@
+{
+  "name": "auth-todo",
+  "version": "1.0.0",
+  "description": "Frontend Vue.js todo-list project",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.15.2",
+    "cors": "^2.8.5",
+    "express": "^4.14.0",
+    "jsonwebtoken": "^7.1.9",
+    "lodash": "^4.16.4",
+    "passport": "^0.3.2",
+    "passport-jwt": "^2.1.0"
+  }
+}

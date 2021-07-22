@@ -8,4 +8,4 @@
 npm install
 
 # run server at localhost:3000
-node index.js
+npm run dev

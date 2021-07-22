@@ -7,8 +7,9 @@
       <li v-if="isAuthenticated" class="nav-item" @click="logout">
         <span class="nav-link">Logout</span>
       </li>
-      <li v-if="!isAuthenticated && !authLoading" class="nav-item">
-        <router-link class="nav-link" to="/login">Login</router-link>
+      <li v-if="!isAuthenticated && !authLoading" class="nav-item d-flex flex-row">
+        <router-link class="nav-link" to="/login" exact>Login</router-link>
+        <router-link class="nav-link" to="/registration" exact>Registration</router-link>
       </li>
     </ul>
   </nav>
@@ -38,8 +39,14 @@ export default {
   computed: {
     ...mapGetters(["isAuthenticated"]),
     ...mapState({
-      authLoading: state => state.auth.status === "loading",
+      authLoading: state => state.auth.status === "loading"
     })
   }
 };
 </script>
+
+<style>
+  .router-link-exact-active.router-link-active {
+    display: none;
+  }
+</style>

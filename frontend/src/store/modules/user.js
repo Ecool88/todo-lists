@@ -1,4 +1,4 @@
-import { USER_REQUEST, USER_ERROR, USER_SUCCESS, ADD_TODO, UPDATE_TODO, DELETE_TODO } from "../actions/user";
+import { REQUEST_TODOS, USER_ERROR, USER_SUCCESS, ADD_TODO, UPDATE_TODO, DELETE_TODO } from "../actions/user";
 import { AUTH_LOGOUT } from "../actions/auth";
 import axios from "axios";
 
@@ -6,7 +6,6 @@ const state = {
   status: "",
   todos: [],
   selected: 'all',
-  token: localStorage.getItem('user-token') || ""
 };
 
 const getters = {
@@ -22,11 +21,10 @@ const getters = {
 };
 
 const actions = {
-  [USER_REQUEST]: ({ commit, dispatch }) => {
-    commit(USER_REQUEST);
-    let id = localStorage.getItem('user-id')
-    let token = localStorage.getItem('user-token')
-    axios.get(`http://localhost:3000/api/user/${id}`, {params: {token} })
+  [REQUEST_TODOS]: ({ commit, dispatch }) => {
+    commit(REQUEST_TODOS);
+    const user = localStorage.getItem("userId") || "";
+    axios.get(`tasks`, {params: {user: user}})
       .then(resp => {
         commit(USER_SUCCESS);
         commit(ADD_TODO, resp.data);
@@ -38,9 +36,8 @@ const actions = {
       });
   },
   [ADD_TODO]:({ commit }, todo) => {
-    let id = localStorage.getItem('user-id')
-    let token = localStorage.getItem('user-token')
-    axios.post(`http://localhost:3000/api/user/${id}`, { token, todo})
+    const user = localStorage.getItem("userId") || "";
+    axios.post(`tasks`, {...todo, user})
       .then(resp => {
         commit(ADD_TODO, resp.data);
       })
@@ -49,9 +46,8 @@ const actions = {
       });
   },
   [UPDATE_TODO]:({ commit }, todo) => {
-    let id = localStorage.getItem('user-id')
-    let token = localStorage.getItem('user-token')
-    axios.put(`http://localhost:3000/api/user/${id}`, { token, todo})
+    const user = localStorage.getItem("userId") || "";
+    axios.put(`tasks/${todo.id}`, {...todo, user})
       .then(resp => {
         commit(ADD_TODO, resp.data);
       })
@@ -59,12 +55,9 @@ const actions = {
         console.log(err);
       });
   },
-  //todo убрать в запросах let id и let token подумать как связать
-  //подумать как передать делит запросе парметры и обработать их
   [DELETE_TODO]:({ commit }, idTodo) => {
-    let id = localStorage.getItem('user-id')
-    let token = localStorage.getItem('user-token')
-    axios.delete(`http://localhost:3000/api/user/${id}/task/${idTodo}/${token}`)
+    const user = localStorage.getItem("userId") || "";
+    axios.delete(`tasks/${idTodo}`, {params: {user}})
       .then(resp => {
         commit(ADD_TODO, resp.data);
       })
@@ -75,7 +68,7 @@ const actions = {
 };
 
 const mutations = {
-  [USER_REQUEST]: state => {
+  [REQUEST_TODOS]: state => {
     state.status = "loading";
   },
   [USER_SUCCESS]: state => {
@@ -88,7 +81,7 @@ const mutations = {
     state.todos = [];
   },
   [ADD_TODO]: (state, resp) => {
-    state.todos = resp.todos;
+    state.todos = resp;
   },
   FILTER_TASKS(state, filter) {
     state.selected = filter;

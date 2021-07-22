@@ -15,7 +15,7 @@
       </div>
       <div class="d-flex align-items-center">
         <button @click="updateTodoItem(todo)" class="btn btn-primary mx-2">{{editing?'Update':'Edit'}}</button>
-        <button @click="deleteTodoItem(todo.id)" class="btn btn-danger">Delete</button>
+        <button @click="deleteTodoItem(todo._id)" class="btn btn-danger">Delete</button>
       </div>
     </div>
   </div>
@@ -28,7 +28,7 @@
 import { mapActions } from "vuex";
 
 export default {
-  name: "feedItem",
+  name: "todoItem",
   props: {
     todo: {
       type: Object,
@@ -39,7 +39,7 @@ export default {
     return {
       todoText: "",
       editing: false,
-      completed: false
+      completed: this.todo.completed
     };
   },
   methods: {
@@ -53,7 +53,7 @@ export default {
         this.todoText = todo.title;
       } else {
         this.UPDATE_TODO({
-          id: todo.id,
+          id: todo._id,
           title: this.todoText,
           completed: this.completed
         });

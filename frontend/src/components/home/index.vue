@@ -32,11 +32,6 @@ export default {
     todoStatus
   },
   name: "home",
-  data() {
-    return {
-
-    };
-  },
   computed: {
     ...mapGetters(["isAuthenticated", "authStatus", "sortedTasks"]),
     loading: function() {

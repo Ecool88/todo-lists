@@ -1,4 +1,4 @@
-export const USER_REQUEST = "USER_REQUEST";
+export const REQUEST_TODOS = "REQUEST_TODOS";
 export const USER_SUCCESS = "USER_SUCCESS";
 export const USER_ERROR = "USER_ERROR";
 export const ADD_TODO = "ADD_TODO";

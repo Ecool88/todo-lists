@@ -14,9 +14,7 @@
 </template>
 
 <script>
-import { v1 } from "uuid";
 import { mapActions } from "vuex";
-
 
 export default {
   name: "todoInput",
@@ -28,10 +26,9 @@ export default {
   methods: {
     ...mapActions(["ADD_TODO"]),
     addTodoItem() {
-      if (this.todoText){
+      if (this.todoText) {
         this.ADD_TODO({
-          id: v1(),
-          title: this.todoText,
+          title: this.todoText.trim(),
           completed: false
         });
         this.todoText = "";

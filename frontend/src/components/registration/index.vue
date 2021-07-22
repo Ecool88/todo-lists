@@ -1,7 +1,11 @@
 <template>
   <div>
-    <form class="w-50  mx-auto" @submit.prevent="login">
-      <h2 class="text-center">Sign in</h2>
+    <form class="w-50  mx-auto" @submit.prevent="registration">
+      <h2 class="text-center">Registration</h2>
+      <div class="form-group">
+        <label for="inputUsername">Username</label>
+        <input required v-model="username" type="text" class="form-control" id="inputUsername"  placeholder="Enter username">
+      </div>
       <div class="form-group">
         <label for="inputEmail">Email address</label>
         <input required v-model="email" type="text" class="form-control" id="inputEmail" aria-describedby="emailHelp" placeholder="Enter email">
@@ -20,23 +24,25 @@
 </style>
 
 <script>
-import { AUTH_REQUEST } from "actions/auth";
+import { CREATE_ACCOUNT } from "actions/auth";
 
 export default {
-  name: "login",
+  name: "registration",
   data() {
     return {
+      username: '',
       email: "email@com",
       password: "123456"
     };
   },
   methods: {
-    login: function() {
+    registration: function() {
       const email = this.email.trim();
       const password = this.password.trim();
-      this.$store.dispatch(AUTH_REQUEST, { email, password }).then(() => {
-        if (this.$route.path !== "/") {
-          this.$router.push("/");
+      const username = this.username.trim();
+      this.$store.dispatch(CREATE_ACCOUNT, { email, password, username }).then(() => {
+        if (this.$route.path === "/registration") {
+          this.$router.push("/login");
         }
       });
     }

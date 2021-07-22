@@ -10,7 +10,7 @@
 
 <script>
 import Navigation from "components/navigation";
-import { USER_REQUEST } from "actions/user";
+import { REQUEST_TODOS } from "actions/user";
 import Footer from "./components/footer/index.vue";
 
 export default {
@@ -19,14 +19,9 @@ export default {
     Navigation
   },
   name: "app",
-  data() {
-    return {
-
-    }
-  },
   created: function() {
     if (this.$store.getters.isAuthenticated) {
-      this.$store.dispatch(USER_REQUEST);
+      this.$store.dispatch(REQUEST_TODOS);
     }
   },
 };

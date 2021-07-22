@@ -28,7 +28,7 @@ export default {
     ...mapMutations(["FILTER_TASKS"]),
     changeFilter(el) {
       this.selected = el;
-      this.FILTER_TASKS(el)
+      this.FILTER_TASKS(el);
     }
   }
 };

@@ -8,7 +8,6 @@ import {
 import { REQUEST_TODOS } from "../actions/user";
 import axios from "axios";
 
-// todo добавить уведомления для ответ notify
 
 const state = {
   accessToken: localStorage.getItem("accessToken") || "",
@@ -26,17 +25,19 @@ const actions = {
   [AUTH_REQUEST]: ({ commit, dispatch }, user) => {
     axios.post('auth/login', {...user})
       .then(resp => {
-        localStorage.setItem("accessToken", resp.data.accessToken);
-        localStorage.setItem("refreshToken", resp.data.refreshToken);
-        localStorage.setItem("userId", resp.data.id);
-        commit(AUTH_SUCCESS, resp.data);
-        dispatch(REQUEST_TODOS);
+        if (resp.data.accessToken && resp.data.refreshToken) {
+          localStorage.setItem("accessToken", resp.data.accessToken);
+          localStorage.setItem("refreshToken", resp.data.refreshToken);
+          localStorage.setItem("userId", resp.data.id);
+          commit(AUTH_SUCCESS, resp.data);
+          alert('Пользователь успешно зашел')
+          dispatch(REQUEST_TODOS);
+        }
       })
       .catch(err => {
+        alert(err.message)
         commit(AUTH_ERROR, err);
-        localStorage.removeItem("accessToken");
-        localStorage.removeItem("refreshToken");
-        localStorage.removeItem("userId");
+        clearLocalStorage();
       });
   },
   [AUTH_LOGOUT]: ({ commit }) => {
@@ -46,21 +47,22 @@ const actions = {
       .then((resp) => {
         alert(resp.data.message);
         commit(AUTH_LOGOUT);
-        localStorage.removeItem("accessToken");
-        localStorage.removeItem("refreshToken");
-        localStorage.removeItem("userId");
+        clearLocalStorage();
       })
       .catch((err) => {
         console.log(err);
+        alert('Пользователь разлогинен без доступа к сайту')
+        commit(AUTH_LOGOUT);
+        clearLocalStorage();
       });
   },
-  [CREATE_ACCOUNT]: ({ commit }, newUser) => {
+  [CREATE_ACCOUNT]: ({}, newUser) => {
     axios.post('auth/registration ', {...newUser})
       .then(resp => {
         alert(resp.data.message);
       })
       .catch(err => {
-        alert(err);
+        alert(err.message);
       });
   }
 };
@@ -93,3 +95,9 @@ export default {
   actions,
   mutations
 };
+
+function clearLocalStorage() {
+  localStorage.removeItem("accessToken");
+  localStorage.removeItem("refreshToken");
+  localStorage.removeItem("userId");
+}

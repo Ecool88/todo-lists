@@ -39,30 +39,33 @@ const actions = {
     const user = localStorage.getItem("userId") || "";
     axios.post(`tasks`, {...todo, user})
       .then(resp => {
-        commit(ADD_TODO, resp.data);
+        alert(resp.data.message);
+        commit(ADD_TODO, resp.data.items);
       })
       .catch((err) => {
-        console.log(err);
+        alert(err.message);
       });
   },
   [UPDATE_TODO]:({ commit }, todo) => {
     const user = localStorage.getItem("userId") || "";
     axios.put(`tasks/${todo.id}`, {...todo, user})
       .then(resp => {
-        commit(ADD_TODO, resp.data);
+        alert(resp.data.message);
+        commit(ADD_TODO, resp.data.items);
       })
       .catch((err) => {
-        console.log(err);
+        alert(err);
       });
   },
   [DELETE_TODO]:({ commit }, idTodo) => {
     const user = localStorage.getItem("userId") || "";
     axios.delete(`tasks/${idTodo}`, {params: {user}})
       .then(resp => {
-        commit(ADD_TODO, resp.data);
+        alert(resp.data.message);
+        commit(ADD_TODO, resp.data.items);
       })
       .catch((err) => {
-        console.log(err);
+        alert(err);
       });
   }
 };

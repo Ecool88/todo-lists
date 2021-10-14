@@ -3,7 +3,11 @@ import axios from "axios";
 const BASE_URL = "http://localhost:3000/api/";
 axios.defaults.baseURL = BASE_URL;
 
-//todo есть баг когда время токена истекает и я добавляю новую задачу она сохранятется 3 раза собственно появляются 3 одинаковые задачи
+
+//todo добавить сообщения при получения от сервера данных пока что через alert эту часть сделал
+// потом при миграции на vue 3 toastnotification
+
+
 export default function setup() {
   axios.interceptors.request.use(
     (config) => {
@@ -27,7 +31,7 @@ export default function setup() {
           localStorage.setItem("accessToken", response.data.accessToken);
           return axios(originalRequest)
         } catch (e) {
-          alert(e, 'Not auth user')
+          alert(e, 'Пользователь не авторизован')
         }
       }
     }

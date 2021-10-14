@@ -4,11 +4,22 @@
       <input
         v-model="todoText"
         class=" form-control"
+        placeholder="Create new task"
         style="margin-right: 1em"
         type="text"
+        @focus="onFocus"
+        @blur="onBlur"
       />
-<!--    не сработал mr-2  удалить атрибут style у инпута-->
       <button @click="addTodoItem" class="btn btn-outline-success">Add</button>
+    </div>
+    <div v-if="todoText.length && !focused" class="form-floating">
+      <textarea
+        v-model="todoBody"
+        id="description"
+        class="form-control mt-2"
+        style="height: 100px"
+        placeholder="Write description for task"></textarea>
+      <label for="description">Description</label>
     </div>
   </div>
 </template>
@@ -20,7 +31,9 @@ export default {
   name: "todoInput",
   data() {
     return {
-      todoText: ""
+      todoText: "",
+      todoBody: "",
+      focused: false
     };
   },
   methods: {
@@ -29,10 +42,18 @@ export default {
       if (this.todoText) {
         this.ADD_TODO({
           title: this.todoText.trim(),
+          description: this.todoBody.trim(),
           completed: false
         });
         this.todoText = "";
+        this.todoBody = "";
       }
+    },
+    onFocus() {
+      this.focused = true;
+    },
+    onBlur() {
+      this.focused = false;
     }
   }
 };

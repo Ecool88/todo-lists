@@ -5,38 +5,37 @@ const bcrypt = require('bcryptjs')
 const { validationResult } = require('express-validator')
 const boom = require('boom')
 
-//todo обработать статусы и сообщения при ошибках во всех конторллерах
 
 module.exports = {
    async logout({body: {refreshToken}}, res) {
      const findToken = await Token.findOne({token: refreshToken})
      if (!findToken){
        return res.status(403).send({
-         message: 'user not authorize'
+         message: 'пользователь не авторизован'
        })
      }
      await Token.findByIdAndDelete(findToken._id)
      return res.status(200).send({
-       message: 'user success logout'
+       message: 'Пользователь успешно разлогинен'
      })
    },
 
    async refreshToken({ body: { refreshToken } }, res){
      if (!refreshToken){
-       return res.send({
-         message: 'don"t action'
+       return res.status(401).send({
+         message: 'токен не найден'
        })
      }
      const currentToken = await Token.findOne({token: refreshToken})
      if (!currentToken){
-       return res.send({
-         message: 'don"t action'
+       return res.status(401).send({
+         message: 'токен не найден'
        })
      }
      jwt.verify(refreshToken, process.env.REFRESH_SECRET_KEY, (err, user) => {
        if (err) {
-         return res.send({
-           message: 'don"t action'
+         return res.status(401).send({
+           message: 'токен не найден'
          })
        }
        const accessToken = jwt.sign({
@@ -56,14 +55,14 @@ module.exports = {
      try {
        const findUser = await User.findOne({email} )
        if (!findUser) {
-         return res.send({
-           message: 'Login or password not match'
+         return res.status(401).send({
+           message: 'Логин или пароль не совпадает'
          })
        }
        const isPasswordCorrect = bcrypt.compareSync(password, findUser.password)
        if (!isPasswordCorrect) {
-         return res.send({
-           message: 'Login or password not match'
+         return res.status(401).send({
+           message: 'Логин или пароль не совпадает'
          })
        }
        const accessToken = jwt.sign({
@@ -98,8 +97,8 @@ module.exports = {
          id: findUser._id
        })
      } catch (err) {
-       return res.send({
-         message: 'Login or password not match',
+       return res.status(401).send({
+         message: 'Логин или пароль не совпадает',
          err
        })
      }
@@ -109,16 +108,16 @@ module.exports = {
     try {
       const errors = validationResult(req)
       if (!errors.isEmpty()){
-        return res.send({
-          message: 'ошибка при регистрации',
+        return res.status(400).send({
+          message: 'Ошибка при регистрации',
           errors
         })
       }
       const { email, password } = req.body
       const findUser = await User.findOne( { email } )
       if (findUser) {
-        return res.send({
-          message: 'email take try another email'
+        return res.status(400).send({
+          message: 'Email уже используется введите другой email'
         })
       }
       const hashPassword = bcrypt.hashSync(password, 7)
@@ -126,7 +125,7 @@ module.exports = {
       const createdUser = await new User({ email, password: hashPassword })
       await createdUser.save();
       return res.status(200).send({
-        message: 'User created'
+        message: 'Пользователь успешно зарегистрирован!'
       })
     } catch (err) {
       return res.send(

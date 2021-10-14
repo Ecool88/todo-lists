@@ -22,26 +22,37 @@ const genericCrud = (model) => ({
       const item = new model(body)
       await item.save()
       const items = await model.find({user: body.user})
-      return res.status(200).send(items)
+      return res.status(200).send({
+        items,
+        message: `Задача создана ${item.title}`,
+      })
     } catch (err) {
       return res.status(400).send(boom.boomify(err));
     }
   },
   async update({ params: { id }, body }, res) {
     try {
+      console.log(body)
       await model.findByIdAndUpdate(id, body, { new: true })
       const user = body.user
       const items = await model.find({user})
-      return res.status(200).send(items)
+      return res.status(200).send({
+        items,
+        message: `Задача ${body.title} обновлена`,
+      })
     } catch (err) {
       return res.status(400).send(boom.boomify(err));
     }
   },
   async delete({ params: { id }, query: {user} }, res) {
     try {
+      const task = await model.findById(id);
       await model.findByIdAndDelete(id);
       const items = await model.find({user})
-      return res.status(200).send(items)
+      return res.status(200).send({
+        items,
+        message: `Задача ${task.title} удалена`
+      })
     } catch (err) {
       return res.status(400).send(boom.boomify(err));
     }

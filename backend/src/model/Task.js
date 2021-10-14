@@ -5,7 +5,7 @@ const schema = new Schema({
     type: String,
     default: ''
   },
-  descrtiption: {
+  description: {
     type: String,
     default: ''
   },

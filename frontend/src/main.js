@@ -1,20 +1,20 @@
-import Vue from "vue";
+import{ createApp } from 'vue';
 import App from "./App";
 import router from "./router";
 import store from "./store";
-import Loading from "components/lib/loading";
 import "bootstrap/dist/css/bootstrap.css";
 import interceptorsSetup from "./services/serviceBase.interceptor";
-
-Vue.config.productionTip = false;
-Vue.component("loading", Loading);
+import Toast from "vue-toastification";
+import "vue-toastification/dist/index.css";
 
 interceptorsSetup();
 
-new Vue({
-  el: "#app",
-  router,
-  store,
-  template: "<App/>",
-  components: { App }
-});
+const optionsNotifications = {
+  timeout: 2000
+};
+
+const app = createApp(App)
+  app.use(router)
+  app.use(store)
+  app.mount('#app')
+  app.use(Toast, optionsNotifications);

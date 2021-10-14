@@ -1,11 +1,9 @@
-import Vue from "vue";
-import Router from "vue-router";
+import {createRouter, createWebHistory} from "vue-router";
 import Home from "components/home";
 import Login from "components/login";
 import Registration from "components/registration"
 import store from "../store";
 
-Vue.use(Router);
 
 const ifNotAuthenticated = (to, from, next) => {
   if (!store.getters.isAuthenticated) {
@@ -16,8 +14,8 @@ const ifNotAuthenticated = (to, from, next) => {
 };
 
 
-export default new Router({
-  mode: "history",
+const router = createRouter({
+  history: createWebHistory(),
   routes: [
     {
       path: "/",
@@ -38,3 +36,5 @@ export default new Router({
     }
   ]
 });
+
+export default router;

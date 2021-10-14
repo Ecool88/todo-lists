@@ -1,6 +1,9 @@
 import { REQUEST_TODOS, USER_ERROR, USER_SUCCESS, ADD_TODO, UPDATE_TODO, DELETE_TODO } from "../actions/user";
 import { AUTH_LOGOUT } from "../actions/auth";
 import axios from "axios";
+import { useToast } from 'vue-toastification'
+
+const toast = useToast()
 
 const state = {
   status: "",
@@ -39,33 +42,33 @@ const actions = {
     const user = localStorage.getItem("userId") || "";
     axios.post(`tasks`, {...todo, user})
       .then(resp => {
-        alert(resp.data.message);
+        toast.success(resp.data.message)
         commit(ADD_TODO, resp.data.items);
       })
       .catch((err) => {
-        alert(err.message);
+        toast.error(err);
       });
   },
   [UPDATE_TODO]:({ commit }, todo) => {
     const user = localStorage.getItem("userId") || "";
     axios.put(`tasks/${todo.id}`, {...todo, user})
       .then(resp => {
-        alert(resp.data.message);
+        toast.success(resp.data.message)
         commit(ADD_TODO, resp.data.items);
       })
       .catch((err) => {
-        alert(err);
+        toast.error(err);
       });
   },
   [DELETE_TODO]:({ commit }, idTodo) => {
     const user = localStorage.getItem("userId") || "";
     axios.delete(`tasks/${idTodo}`, {params: {user}})
       .then(resp => {
-        alert(resp.data.message);
+        toast.success(resp.data.message);
         commit(ADD_TODO, resp.data.items);
       })
       .catch((err) => {
-        alert(err);
+        toast.error(err);
       });
   }
 };

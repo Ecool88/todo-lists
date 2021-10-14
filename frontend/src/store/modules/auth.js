@@ -7,7 +7,9 @@ import {
 } from "../actions/auth";
 import { REQUEST_TODOS } from "../actions/user";
 import axios from "axios";
+import { useToast } from 'vue-toastification'
 
+const toast = useToast()
 
 const state = {
   accessToken: localStorage.getItem("accessToken") || "",
@@ -30,12 +32,12 @@ const actions = {
           localStorage.setItem("refreshToken", resp.data.refreshToken);
           localStorage.setItem("userId", resp.data.id);
           commit(AUTH_SUCCESS, resp.data);
-          alert('Пользователь успешно зашел')
+          toast.info('Вы успешно вошли');
           dispatch(REQUEST_TODOS);
         }
       })
       .catch(err => {
-        alert(err.message)
+        toast.error(err.message);
         commit(AUTH_ERROR, err);
         clearLocalStorage();
       });
@@ -45,13 +47,13 @@ const actions = {
     let refreshToken = localStorage.getItem('refreshToken')
     axios.post(`auth/logout`, {refreshToken})
       .then((resp) => {
-        alert(resp.data.message);
+        toast.info(resp.data.message);
         commit(AUTH_LOGOUT);
         clearLocalStorage();
       })
       .catch((err) => {
         console.log(err);
-        alert('Пользователь разлогинен без доступа к сайту')
+        toast.error('Вы разлогинены без доступа к сайту');
         commit(AUTH_LOGOUT);
         clearLocalStorage();
       });
@@ -59,10 +61,10 @@ const actions = {
   [CREATE_ACCOUNT]: ({}, newUser) => {
     axios.post('auth/registration ', {...newUser})
       .then(resp => {
-        alert(resp.data.message);
+        toast.info(resp.data.message);
       })
       .catch(err => {
-        alert(err.message);
+        toast.error(err)
       });
   }
 };

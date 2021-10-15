@@ -4,11 +4,11 @@
       <h2 class="text-center">Sign in</h2>
       <div class="form-group">
         <label for="inputEmail">Email address</label>
-        <input required v-model="email" type="text" class="form-control" id="inputEmail" aria-describedby="emailHelp" placeholder="Enter email">
+        <input required v-model="loginData.email" type="text" class="form-control" id="inputEmail" aria-describedby="emailHelp" placeholder="Enter email">
       </div>
       <div class="form-group">
         <label for="inputPassword">Password</label>
-        <input  required v-model="password" type="password" class="form-control" id="inputPassword" placeholder="Enter password">
+        <input  required v-model="loginData.password" type="password" class="form-control" id="inputPassword" placeholder="Enter password">
       </div>
       <button type="submit" class="btn btn-primary mt-2 float-end">Submit</button>
     </form>
@@ -20,26 +20,38 @@
 </style>
 
 <script>
-import { AUTH_REQUEST } from "actions/auth";
+import {reactive} from "vue";
+import {useStore} from "vuex";
+import {useRouter, useRoute} from "vue-router";
 
 export default {
   name: "login",
-  data() {
-    return {
-      email: "email@com",
-      password: "123456"
-    };
-  },
-  methods: {
-    login: function() {
-      const email = this.email.trim();
-      const password = this.password.trim();
-      this.$store.dispatch(AUTH_REQUEST, { email, password }).then(() => {
-        if (this.$route.path !== "/") {
-          this.$router.push("/");
+  setup() {
+    const store = useStore();
+    const router = useRouter();
+    const route = useRoute();
+
+    const loginData = reactive({
+      email: "second@yandex.com",
+      password: "passw0rd"
+    })
+
+    const login = () => {
+      const email = loginData.email.trim();
+      const password = loginData.password.trim();
+      store.dispatch('AUTH_REQUEST', { email, password }).then(() => {
+        if (route.path !== "/") {
+          router.push("/");
         }
       });
     }
+
+
+    return{
+      loginData,
+      login
+    }
+
   }
 };
 </script>

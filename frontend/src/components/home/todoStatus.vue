@@ -15,20 +15,25 @@
 </template>
 
 <script>
-import { mapMutations } from "vuex";
+import {ref} from "vue";
+import {useStore} from "vuex";
 
 export default {
   name: "todoStatus",
-  data() {
-    return {
-      selected: 'all'
-    };
-  },
-  methods: {
-    ...mapMutations(["FILTER_TASKS"]),
-    changeFilter(el) {
-      this.selected = el;
-      this.FILTER_TASKS(el);
+  setup() {
+    const store = useStore();
+
+    const selected = ref('all')
+
+    const changeFilter = (el) => {
+      selected.value = el;
+      store.commit('FILTER_TASKS', el)
+    }
+
+
+    return{
+      selected,
+      changeFilter
     }
   }
 };

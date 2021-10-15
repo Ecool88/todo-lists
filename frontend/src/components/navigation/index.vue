@@ -1,8 +1,8 @@
 <template>
   <nav class="navbar navbar-expand-sm bg-light">
-    <div>
+    <router-link class="nav-link home-link" to="/">
       <strong>Your Tasks</strong>
-    </div>
+    </router-link>
     <ul class="navbar-nav" style="margin-left: auto;">
       <li v-if="isAuthenticated" class="nav-item" @click="logout">
         <span class="nav-link">Logout</span>
@@ -22,31 +22,39 @@
 </style>
 
 <script>
-import { mapGetters, mapState } from "vuex";
-import { AUTH_LOGOUT } from "actions/auth";
+import { useStore } from "vuex";
+import { useRouter, useRoute } from "vue-router";
+import {computed} from "vue";
 
 export default {
   name: "navigation",
-  methods: {
-    logout: function() {
-      this.$store.dispatch(AUTH_LOGOUT).then(() => {
-        if (this.$route.path !== "/") {
-          this.$router.push("/");
+  setup(){
+    const store = useStore();
+    const router = useRouter();
+    const route = useRoute()
+
+    const isAuthenticated = computed(() => store.getters["isAuthenticated"])
+    const authLoading = computed(() => store.state.auth.status === "loading")
+    const logout = () => {
+      store.dispatch('AUTH_LOGOUT').then(() => {
+        if (route.path !== "/") {
+          router.push("/");
         }
-      });
+      })
+    }
+
+
+    return {
+      isAuthenticated,
+      authLoading,
+      logout
     }
   },
-  computed: {
-    ...mapGetters(["isAuthenticated"]),
-    ...mapState({
-      authLoading: state => state.auth.status === "loading"
-    })
-  }
 };
 </script>
 
 <style>
-  .router-link-exact-active.router-link-active {
+  .router-link-exact-active.router-link-active:not(.home-link) {
     display: none;
   }
 </style>

@@ -1,16 +1,16 @@
 <template>
   <div>
     <div class="d-flex my-3 justify-content-between align-items-center">
-      <h3 :class="{'text-decoration-line-through' : todo.completed}" v-if="!editing">{{todo.title}}</h3>
+      <h3 :class="{'text-decoration-line-through' : todo.completed}" v-if="!item.editing">{{todo.title}}</h3>
       <div v-else class="mr-2 d-flex justify-content-between align-items-center col">
         <input
-          v-model="todoText"
+          v-model="item.title"
           type="text"
           class="form-control w-75"
         />
         <div class="mx-1">
           <input
-            :checked="completed"
+            :checked="item.completed"
             class="mx-1"
             @change="onCompleted"
             type="checkbox" />
@@ -18,14 +18,14 @@
         </div>
       </div>
       <div class="d-flex align-items-center">
-        <button @click="updateTodoItem(todo)" class="btn btn-primary mx-2">{{editing?'Update':'Edit'}}</button>
+        <button @click="updateTodoItem(todo)" class="btn btn-primary mx-2">{{item.editing?'Update':'Edit'}}</button>
         <button @click="deleteTodoItem(todo._id)" class="btn btn-danger">Delete</button>
       </div>
     </div>
-    <p v-if="!editing" class="lead" :class="{'text-decoration-line-through' : todo.completed}">{{todo.description}}</p>
+    <p v-if="!item.editing" class="lead" :class="{'text-decoration-line-through' : todo.completed}">{{todo.description}}</p>
     <div v-else class="form-floating">
       <textarea class="form-control" placeholder="Leave a comment here" :id="'floatingTextarea-' + todo._id"
-                style="height: 100px" v-model="todoBody"></textarea>
+                style="height: 100px" v-model="item.description"></textarea>
       <label :for="'floatingTextarea-' + todo._id">Description</label>
     </div>
   </div>
@@ -35,7 +35,8 @@
 
 </style>
 <script>
-import { mapActions } from "vuex";
+import { reactive } from "vue";
+import {useStore} from "vuex";
 
 export default {
   name: "todoItem",
@@ -45,35 +46,47 @@ export default {
       default: () => {}
     }
   },
-  data() {
-    return {
-      todoText: "",
-      todoBody: "",
+  setup(props) {
+    const store = useStore();
+
+    const item = reactive({
+      title: '',
+      description: '',
       editing: false,
-      completed: this.todo.completed
+      completed: props.todo.completed
+    })
+
+    const onCompleted = () => {
+      item.completed = !item.completed;
     };
-  },
-  methods: {
-    ...mapActions(["DELETE_TODO", "UPDATE_TODO"]),
-    onCompleted() {
-      this.completed = this.completed == true ? false : true;
-    },
-    updateTodoItem(todo) {
-      this.editing = this.editing == true ? false : true;
-      if (this.editing) {
-        this.todoText = todo.title;
-        this.todoBody = todo.description;
+
+
+    const updateTodoItem = (todo) => {
+      item.editing = !item.editing;
+      if (item.editing) {
+        item.title = todo.title;
+        item.description = todo.description;
       } else {
-        this.UPDATE_TODO({
+        store.dispatch('UPDATE_TODO', {
           id: todo._id,
-          title: this.todoText,
-          description: this.todoBody,
-          completed: this.completed
-        });
+          title: item.title,
+          description: item.description,
+          completed: item.completed
+        })
       }
-    },
-    deleteTodoItem(id){
-      this.DELETE_TODO(id);
+    }
+
+    const deleteTodoItem = (id) => {
+      store.dispatch('DELETE_TODO', id)
+    }
+
+
+
+    return {
+      item,
+      onCompleted,
+      updateTodoItem,
+      deleteTodoItem
     }
   }
 };

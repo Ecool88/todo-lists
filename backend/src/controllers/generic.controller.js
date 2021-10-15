@@ -32,7 +32,6 @@ const genericCrud = (model) => ({
   },
   async update({ params: { id }, body }, res) {
     try {
-      console.log(body)
       await model.findByIdAndUpdate(id, body, { new: true })
       const user = body.user
       const items = await model.find({user})

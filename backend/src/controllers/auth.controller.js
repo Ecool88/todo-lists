@@ -121,7 +121,6 @@ module.exports = {
         })
       }
       const hashPassword = bcrypt.hashSync(password, 7)
-      console.log(hashPassword, 'hashPassword')
       const createdUser = await new User({ email, password: hashPassword })
       await createdUser.save();
       return res.status(200).send({
